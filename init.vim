@@ -1,5 +1,9 @@
 call plug#begin()
 
+Plug 'EdenEast/nightfox.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" ^-- :TSInstall <language_to_install> 
+
 Plug 'williamboman/mason.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/plenary.nvim'
@@ -28,7 +32,7 @@ EOF
         vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
     end
 
-    local servers = {'zls'}
+    local servers = {'zls', 'pyright'} -- Add 'pyright' for Python LSP
     for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup {
             on_attach = on_attach,
@@ -36,6 +40,19 @@ EOF
     end
 EOF
 
+" treesitter
+:lua << EOF
+    require('nvim-treesitter.configs').setup {
+        -- List of parsers to install
+        ensure_installed = { "python", "lua", "javascript", "html", "css" },
+
+        -- Enable highlighting
+        highlight = {
+            enable = true,              -- Enable Treesitter highlighting
+            additional_vim_regex_highlighting = false, -- Disable default Vim highlighting
+        },
+    }
+EOF
 
 " Options
 :lua << EOF
@@ -49,4 +66,8 @@ EOF
 	vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 	vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 	vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+EOF
+
+:lua << EOF
+    vim.cmd('colorscheme carbonfox')
 EOF
