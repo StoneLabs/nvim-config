@@ -21,6 +21,10 @@ Plug 'Zeioth/compiler.nvim'
 Plug 'stevearc/overseer.nvim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
+" Quarto
+Plug 'quarto-dev/quarto-nvim'
+Plug 'jmbuhr/otter.nvim'
+
 " Add DAP UI and Virtual Text Plugins
 Plug 'nvim-neotest/nvim-nio'
 Plug 'rcarriga/nvim-dap-ui'
@@ -148,6 +152,38 @@ vim.keymap.set('n', '<leader>B', function() dap.set_breakpoint(vim.fn.input('Bre
 vim.keymap.set('n', '<leader>lp', function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>dr', function() dap.repl.open() end, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>du', function() dapui.toggle() end, { noremap = true, silent = true })
+EOF
+
+
+" Quarto Setup
+:lua << EOF
+quarto = require('quarto')
+quarto.setup{
+  debug = false,
+  closePreviewOnExit = true,
+  lspFeatures = {
+    enabled = true,
+    chunks = "curly",
+    languages = { "r", "python", "julia", "bash", "html" },
+    diagnostics = {
+      enabled = true,
+      triggers = { "BufWritePost" },
+    },
+    completion = {
+      enabled = true,
+    },
+  },
+  codeRunner = {
+    enabled = true,
+    default_method = "slime", -- "molten", "slime", "iron" or <function>
+    ft_runners = {}, -- filetype to runner, ie. `{ python = "molten" }`.
+    -- Takes precedence over `default_method`
+    never_run = { 'yaml' }, -- filetypes which are never sent to a code runner
+  },
+}
+
+-- Keybinds
+vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true })
 EOF
 
 " Keybinds
