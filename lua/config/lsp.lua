@@ -1,6 +1,6 @@
 vim.lsp.enable({
     "lua_ls",
-    "python"
+    "pyright"
 })
 
 vim.diagnostic.config({ virtual_text = true })
