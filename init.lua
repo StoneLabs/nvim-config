@@ -10,6 +10,7 @@ vim.opt.expandtab = true
 vim.opt.clipboard = "unnamedplus"
 
 require("config.lazy")
+require("config.lsp")
 
 vim.keymap.set("n", "<leader>r", function()
   dofile(vim.env.MYVIMRC)
