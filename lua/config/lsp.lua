@@ -112,10 +112,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       peek_location("textDocument/typeDefinition")
     end, "Peek type definition")
     map("K", vim.lsp.buf.hover, "Hover documentation")
-    map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
-    map("<leader>ca", function()
-      require("tiny-code-action").code_action()
-    end, "Code action")
     map("<leader>ds", tb.lsp_document_symbols, "Document symbols")
     map("<leader>ws", tb.lsp_workspace_symbols, "Workspace symbols")
 
