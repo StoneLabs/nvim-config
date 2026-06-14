@@ -1,23 +1,37 @@
 -- q* = editing (g* = inspect / navigate)
 
+local api = require("Comment.api")
+
 local function map(mode, lhs, rhs, desc)
   vim.keymap.set(mode, lhs, rhs, { desc = desc, silent = true })
 end
 
-local comment = require("Comment.api")
+local function comment_line()
+  api.locked("toggle.linewise.current")()
+end
+
+local function comment_block()
+  api.locked("toggle.blockwise.current")()
+end
+
+local function comment_visual(ctype)
+  local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
+  vim.api.nvim_feedkeys(esc, "nx", false)
+  api.locked("toggle." .. ctype)(vim.fn.visualmode())
+end
 
 -- Comment
-map("n", "qc", comment.toggle.linewise.current, "Comment line")
-map("n", "qb", comment.toggle.blockwise.current, "Comment block")
+map("n", "qc", comment_line, "Comment line")
+map("n", "qb", comment_block, "Comment block")
 map("v", "qc", function()
-  comment.toggle.linewise(vim.fn.visualmode())
+  comment_visual("linewise")
 end, "Comment line")
 map("v", "qb", function()
-  comment.toggle.blockwise(vim.fn.visualmode())
+  comment_visual("blockwise")
 end, "Comment block")
-map("n", "<C-_>", comment.toggle.linewise.current, "Comment line")
+map("n", "<C-_>", comment_line, "Comment line")
 map("v", "<C-_>", function()
-  comment.toggle.linewise(vim.fn.visualmode())
+  comment_visual("linewise")
 end, "Comment line")
 
 -- LSP edit
@@ -67,3 +81,14 @@ map("v", "q<", "<gv", "Outdent selection")
 map("n", "qw", function()
   vim.cmd([[%s/\s\+$//e]])
 end, "Trim trailing whitespace")
+
+-- which-key replays q* via feedkeys; locked comment + pre_hook avoids silent fail
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  once = true,
+  callback = function()
+    require("which-key").add({
+      { "q", group = "edit" },
+    })
+  end,
+})
