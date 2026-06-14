@@ -1,11 +1,5 @@
 vim.g.mapleader = "\\"
 
--- dotnet global tools (~/.dotnet/tools) are often missing from GUI/Cursor PATH
-local dotnet_tools = vim.fn.expand("~/.dotnet/tools")
-if vim.fn.isdirectory(dotnet_tools) == 1 and not vim.env.PATH:find(dotnet_tools, 1, true) then
-  vim.env.PATH = dotnet_tools .. ":" .. vim.env.PATH
-end
-
 vim.opt.number = true
 vim.opt.relativenumber = true
 
@@ -13,9 +7,16 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
+vim.opt.mousescroll = "ver:1,hor:10"
+
 vim.opt.clipboard = "unnamedplus"
 
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+
+vim.o.winborder = "single"
+
 require("config.lazy")
+require("config.fixes")
 require("config.lsp")
 
 vim.keymap.set("n", "<leader>r", function()
