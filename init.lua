@@ -13,6 +13,8 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
+vim.opt.signcolumn = "yes"
+
 vim.o.winborder = "single"
 
 require("config.lazy")

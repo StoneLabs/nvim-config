@@ -50,13 +50,6 @@ return {
     config = function(_, opts)
       require("dap-view")
       require("easy-dotnet").setup(opts)
-
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "cs", "csproj" },
-        callback = function()
-          vim.wo.signcolumn = "yes"
-        end,
-      })
     end,
     opts = {
       picker = "telescope",

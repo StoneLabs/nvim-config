@@ -68,6 +68,26 @@ local augroup = vim.api.nvim_create_augroup("UserLspConfig", { clear = true })
 vim.api.nvim_create_autocmd("LspAttach", {
   group = augroup,
   callback = function(event)
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    if client and client.name == "roslyn_ls" then
+      local bufnr = event.buf
+      local function pull_diagnostics()
+        client:request(
+          vim.lsp.protocol.Methods.textDocument_diagnostic,
+          { textDocument = vim.lsp.util.make_text_document_params(bufnr) },
+          nil,
+          bufnr
+        )
+      end
+
+      vim.api.nvim_create_autocmd("BufEnter", {
+        group = augroup,
+        buffer = bufnr,
+        callback = pull_diagnostics,
+      })
+      pull_diagnostics()
+    end
+
     local map = function(keys, func, desc)
       vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
     end
@@ -93,7 +113,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end, "Peek type definition")
     map("K", vim.lsp.buf.hover, "Hover documentation")
     map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
-    map("<leader>ca", vim.lsp.buf.code_action, "Code action")
+    map("<leader>ca", function()
+      require("tiny-code-action").code_action()
+    end, "Code action")
     map("<leader>ds", tb.lsp_document_symbols, "Document symbols")
     map("<leader>ws", tb.lsp_workspace_symbols, "Workspace symbols")
 
