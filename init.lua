@@ -17,6 +17,7 @@ vim.o.winborder = "single"
 
 require("config.lazy")
 require("config.fixes")
+require("config.quickfix")
 require("config.lsp")
 require("config.editing")
 
