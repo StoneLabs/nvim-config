@@ -20,7 +20,3 @@ require("config.fixes")
 require("config.quickfix")
 require("config.lsp")
 require("config.editing")
-
-vim.keymap.set("n", "<leader>r", function()
-  dofile(vim.env.MYVIMRC)
-end, { desc = "Reload config" })
