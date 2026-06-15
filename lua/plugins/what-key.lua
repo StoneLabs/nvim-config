@@ -3,11 +3,14 @@ return {
   event = "VeryLazy",
   opts = {
     spec = {
-      { "q", group = "edit" },
+      { "<leader>k", group = "Code" },
+      { "<leader>q", group = "quickfix" },
+      { "<leader>d", group = "Diagnostics" },
+      { "<leader>c", group = "Compile" },
     },
     triggers = {
       { "<auto>", mode = "nixsotc" },
-      { "q", mode = { "n", "v" } },
+      { "<leader>k", mode = { "n", "v" } },
     },
   },
   keys = {

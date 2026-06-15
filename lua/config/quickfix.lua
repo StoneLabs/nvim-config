@@ -2,6 +2,10 @@ local M = {}
 
 local QF_HEIGHT = 12
 
+local function qf_winid()
+  return vim.fn.getqflist({ winid = 0 }).winid
+end
+
 function M.open()
   if #vim.fn.getqflist() == 0 then
     return
@@ -9,11 +13,19 @@ function M.open()
   vim.cmd("botright copen " .. QF_HEIGHT)
 end
 
-function M.toggle()
-  if vim.fn.getqflistwinid() ~= 0 then
-    vim.cmd("cclose")
-  else
-    M.open()
+function M.open_or_jump()
+  if #vim.fn.getqflist() == 0 then
+    return
+  end
+
+  local winid = qf_winid()
+  if winid == 0 then
+    vim.cmd("botright copen " .. QF_HEIGHT)
+    winid = qf_winid()
+  end
+
+  if winid ~= 0 then
+    vim.api.nvim_set_current_win(winid)
   end
 end
 
@@ -21,12 +33,12 @@ local function map(lhs, rhs, desc)
   vim.keymap.set("n", lhs, rhs, { desc = desc, silent = true })
 end
 
-map("<leader>dq", function()
-  vim.diagnostic.setqflist()
+map("<leader>qp", function()
+  vim.diagnostic.setqflist({ severity = vim.diagnostic.severity.ERROR })
   M.open()
-end, "Diagnostics → quickfix")
+end, "Populate quickfix with errors")
 
-map("<leader>qq", M.toggle, "Toggle quickfix")
+map("<leader>qq", M.open_or_jump, "Open or jump to quickfix")
 
 map("<leader>qc", function()
   vim.cmd("cclose")
@@ -40,16 +52,6 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
         M.open()
       end
     end)
-  end,
-})
-
-vim.api.nvim_create_autocmd("User", {
-  pattern = "VeryLazy",
-  once = true,
-  callback = function()
-    require("which-key").add({
-      { "<leader>q", group = "quickfix" },
-    })
   end,
 })
 

@@ -1,9 +1,13 @@
--- q* = editing (g* = inspect / navigate)
+-- <leader>k* = code (g* = inspect / navigate)
 
 local api = require("Comment.api")
 
 local function map(mode, lhs, rhs, desc)
   vim.keymap.set(mode, lhs, rhs, { desc = desc, silent = true })
+end
+
+local function kmap(mode, key, rhs, desc)
+  map(mode, "<leader>k" .. key, rhs, desc)
 end
 
 local function comment_line()
@@ -21,12 +25,12 @@ local function comment_visual(ctype)
 end
 
 -- Comment
-map("n", "qc", comment_line, "Comment line")
-map("n", "qb", comment_block, "Comment block")
-map("v", "qc", function()
+kmap("n", "c", comment_line, "Comment line")
+kmap("n", "b", comment_block, "Comment block")
+kmap("v", "c", function()
   comment_visual("linewise")
 end, "Comment line")
-map("v", "qb", function()
+kmap("v", "b", function()
   comment_visual("blockwise")
 end, "Comment block")
 map("n", "<C-_>", comment_line, "Comment line")
@@ -35,20 +39,20 @@ map("v", "<C-_>", function()
 end, "Comment line")
 
 -- LSP edit
-map("n", "qa", function()
+kmap("n", "a", function()
   require("tiny-code-action").code_action()
 end, "Code action")
-map("n", "qx", function()
+kmap("n", "x", function()
   require("tiny-code-action").code_action({ context = { only = { "quickfix" } } })
 end, "Quick fix")
-map("n", "qr", vim.lsp.buf.rename, "Rename symbol")
-map("n", "qo", function()
+kmap("n", "r", vim.lsp.buf.rename, "Rename symbol")
+kmap("n", "o", function()
   require("tiny-code-action").code_action({ context = { only = { "source.organizeImports" } } })
 end, "Organize imports")
-map("n", "qf", function()
+kmap("n", "f", function()
   vim.lsp.buf.format({ async = true, timeout_ms = 3000 })
 end, "Format buffer")
-map("n", "ql", function()
+kmap("n", "l", function()
   local row = vim.api.nvim_win_get_cursor(0)[1] - 1
   vim.lsp.buf.format({
     async = true,
@@ -59,36 +63,25 @@ map("n", "ql", function()
     },
   })
 end, "Format line")
-map("v", "qs", function()
+kmap("v", "s", function()
   vim.lsp.buf.format({ async = true, timeout_ms = 3000 })
 end, "Format selection")
 
 -- Line ops
-map("n", "qd", "<cmd>copy .<cr>", "Duplicate line")
-map("n", "qk", "dd", "Delete line")
-map("n", "qj", "J", "Join lines")
-map("v", "qj", "J", "Join selection")
-map("n", "qJ", "<cmd>m+1<cr>", "Move line down")
-map("n", "qK", "<cmd>m-2<cr>", "Move line up")
+kmap("n", "d", "<cmd>copy .<cr>", "Duplicate line")
+kmap("n", "k", "dd", "Delete line")
+kmap("n", "j", "J", "Join lines")
+kmap("v", "j", "J", "Join selection")
+kmap("n", "J", "<cmd>m+1<cr>", "Move line down")
+kmap("n", "K", "<cmd>m-2<cr>", "Move line up")
 
 -- Indent
-map("n", "q>", ">>", "Indent line")
-map("n", "q<", "<<", "Outdent line")
-map("v", "q>", ">gv", "Indent selection")
-map("v", "q<", "<gv", "Outdent selection")
+kmap("n", ">", ">>", "Indent line")
+kmap("n", "<", "<<", "Outdent line")
+kmap("v", ">", ">gv", "Indent selection")
+kmap("v", "<", "<gv", "Outdent selection")
 
 -- Cleanup
-map("n", "qw", function()
+kmap("n", "w", function()
   vim.cmd([[%s/\s\+$//e]])
 end, "Trim trailing whitespace")
-
--- which-key replays q* via feedkeys; locked comment + pre_hook avoids silent fail
-vim.api.nvim_create_autocmd("User", {
-  pattern = "VeryLazy",
-  once = true,
-  callback = function()
-    require("which-key").add({
-      { "q", group = "edit" },
-    })
-  end,
-})
