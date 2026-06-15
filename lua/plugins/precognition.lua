@@ -1,8 +1,8 @@
 return {
     "tris203/precognition.nvim",
-    --event = "VeryLazy",
+    event = "VeryLazy",
     opts = {
-    -- startVisible = true,
+        startVisible = false,
     -- debounceMs = 0,
     -- showBlankVirtLine = true,
     -- highlightFullVirtLine = false,

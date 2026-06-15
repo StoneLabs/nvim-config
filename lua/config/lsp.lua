@@ -97,6 +97,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("gd", tb.lsp_definitions, "Go to definition")
     map("gD", vim.lsp.buf.declaration, "Go to declaration")
     map("gr", tb.lsp_references, "Go to references")
+    map("gu", tb.lsp_references, "Find usages")
     map("gi", tb.lsp_implementations, "Go to implementation")
     map("gt", tb.lsp_type_definitions, "Go to type definition")
     map("gpd", function()
