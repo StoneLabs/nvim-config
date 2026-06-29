@@ -10,6 +10,7 @@ return {
       { "<leader>q", group = "quickfix" },
       { "<leader>d", group = "Diagnostics" },
       { "<leader>c", group = "Compile" },
+      { "<leader>g", group = "Git" },
     },
     triggers = {
       { "<auto>", mode = "nixsotc" },
